@@ -16,8 +16,14 @@ header = {
 def ScanTarGet(TarGet,task):
     try:
         req = requests.get(TarGet + task, verify=False, timeout=3000,headers=header)
-        if (req.status_code in [200, 302, 403]):
-            print(TarGet + task)
+        if (req.status_code == 200):
+            print("\033[32m[" + str(req.status_code) + "]\033[0m  " + TarGet + task)
+            time.sleep(2)
+        elif(req.status_code == 302):
+            print("\033[4;36m[" + str(req.status_code) + "]\033[0m  " + TarGet + task)
+            time.sleep(2)
+        elif(req.status_code == 403):
+            print("\033[31m[" + str(req.status_code) + "]\033[0m  " + TarGet + task)
             time.sleep(2)
     except:
         pass
@@ -40,6 +46,7 @@ def main():
             task = task.replace("\n", "")
             t = threading.Thread(target=ScanTarGet, args=(TarGet, task))
             t.start()
+        f.close()
     except IndexError as e:
         print("Python dscan.py <url>")
 
