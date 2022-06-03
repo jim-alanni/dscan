@@ -1,7 +1,5 @@
-import threading
-import time
-import requests
-import sys
+import threading,time,requests,sys,json
+import socket
 
 
 f = open("./DIR.txt","r+")
@@ -28,6 +26,19 @@ def ScanTarGet(TarGet,task):
     except:
         pass
 
+def GetPoo(TarGetip):
+    api = "http://ip-api.com/json/" + TarGetip + "?lang=zh-CN"
+    Req = requests.get(api,timeout=3000,verify=False,headers=header)
+    Content = Req.text
+    Json_dict = json.loads(Content)
+    print("\033[32m [*] \033[0m" + TarGetip + " => " + Json_dict["country"] + "-" + Json_dict["regionName"] + "-" + Json_dict["city"])
+
+def PDO(TarGet):
+    GetName = TarGet.replace("http://","")
+    GetName = GetName.replace("https://","")
+    GetHost = socket.gethostbyname(GetName)
+    return GetHost
+
 def main():
 
     print('''
@@ -39,9 +50,9 @@ def main():
             \/          \/     \/     \/
                                   --Ver 2.1
     ''')
-
+    TarGet = sys.argv[1]
+    GetPoo(PDO(TarGet))
     try:
-        TarGet = sys.argv[1]
         for task in Dirs:
             task = task.replace("\n", "")
             t = threading.Thread(target=ScanTarGet, args=(TarGet, task))
